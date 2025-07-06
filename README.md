@@ -12,7 +12,7 @@
 ## 📦 Dependencies
 The utility uses the gopacket library to capture and analyze network traffic. It requires system dependencies to operate.
 <details> <summary><strong>windows</strong></summary>
-  <li>Install <a src="https://npcap.com/" >Npcap</a> (be sure to select the "WinPcap API-compatible Mode" option).</li>
+  <li>Install <a href="https://npcap.com/" >Npcap</a> (be sure to select the "WinPcap API-compatible Mode" option).</li>
 
 </details>
 
