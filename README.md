@@ -28,10 +28,16 @@ sudo apt install libpcap-dev
 sudo dnf install libpcap-devel
 ```
 </details> <details> <summary><strong>Arch / Manjaro</strong></summary>
+
+```
 sudo pacman -S libpcap
+```
 
 </details> <details> <summary><strong>Alpine Linux</strong></summary>
+
+```
 apk add libpcap-dev
+```
 </details>
 
 ## ⚙️ Build
