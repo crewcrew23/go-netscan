@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/crewcrew23/go-netscan/internal/core"
 	"github.com/crewcrew23/go-netscan/internal/types"
-	"github.com/crewcrew23/go-netscan/internal/util"
 	"github.com/urfave/cli/v3"
 
 	"github.com/google/gopacket"
@@ -70,7 +70,7 @@ func main() {
 			}
 
 			if findInterfaces {
-				device := util.SelectInterface()
+				device := core.SelectInterface()
 				start(device, makeLayerType(filter))
 				return nil
 			}
@@ -125,6 +125,6 @@ func start(netInterface string, filterLayer *types.LayerTypeWrapper) {
 
 	packetSource := gopacket.NewPacketSource(conn, conn.LinkType())
 	for packet := range packetSource.Packets() {
-		util.PrintPacketData(packet, filterLayer)
+		core.PrintPacketData(packet, filterLayer)
 	}
 }
