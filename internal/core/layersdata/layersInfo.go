@@ -9,21 +9,25 @@ import (
 	"github.com/google/gopacket/layers"
 )
 
-func PrintEthernetLayerData(ethLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
+func PrintEthernetLayerData(packet gopacket.Packet, ethLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
 	if filterLayer != nil && *filterLayer.Layer == ethLayer.LayerType() {
 		fmt.Println("====== New Packet ======")
 		eth, _ := ethLayer.(*layers.Ethernet)
 		fmt.Printf("Ethernet: %s -> %s | Type: %s\n", eth.SrcMAC, eth.DstMAC, eth.EthernetType)
+		layersutil.PrintPayload(packet)
+		fmt.Printf("=========================\n")
 		return true
 	}
 	return false
 }
 
-func PrintIPLayerData(ipLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
+func PrintIPLayerData(packet gopacket.Packet, ipLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
 	if filterLayer != nil && *filterLayer.Layer == ipLayer.LayerType() {
-		fmt.Println("====== New Packet ======")
-		ip, _ := ipLayer.(*layers.IPv4)
-		fmt.Printf("IPv4: %s -> %s | Protocol: %s\n", ip.SrcIP, ip.DstIP, ip.Protocol)
+		layersutil.WrapPacketOutput(func() {
+			ip, _ := ipLayer.(*layers.IPv4)
+			fmt.Printf("IPv4: %s -> %s | Protocol: %s\n", ip.SrcIP, ip.DstIP, ip.Protocol)
+			layersutil.PrintPayload(packet)
+		})
 		return true
 	}
 	return false
@@ -39,38 +43,45 @@ func PrintTCPLayerData(packet gopacket.Packet, tcpLayer gopacket.Layer, filterLa
 				if appLayer != nil {
 					payload := appLayer.Payload()
 					if layersutil.IsHttpPayload(payload) {
-						fmt.Println("====== New Packet ======")
-						fmt.Printf("TCP: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
-						fmt.Println(string(payload))
+						layersutil.WrapPacketOutput(func() {
+							fmt.Printf("TCP: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
+							fmt.Println(string(payload)) //TODO: http paylaod
+						})
 						return true
 					}
 				}
 			}
 		} else {
-			fmt.Println("====== New Packet ======")
-			fmt.Printf("TCP: %d -> %d | Flags: %s\n", tcp.SrcPort, tcp.DstPort, layersutil.PintTCPFlags(packet))
+			layersutil.WrapPacketOutput(func() {
+				fmt.Printf("TCP: %d -> %d | Flags: %s\n", tcp.SrcPort, tcp.DstPort, layersutil.PirntTCPFlags(packet))
+				layersutil.PrintPayload(packet)
+			})
 			return true
 		}
 	}
 	return false
 }
 
-func PrintUDPLayerData(udpLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
+func PrintUDPLayerData(packet gopacket.Packet, udpLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
 	if filterLayer != nil && *filterLayer.Layer == udpLayer.LayerType() {
-		fmt.Println("====== New Packet ======")
-		udp, _ := udpLayer.(*layers.UDP)
-		fmt.Printf("UDP: %d -> %d\n", udp.SrcPort, udp.DstPort)
+		layersutil.WrapPacketOutput(func() {
+			udp, _ := udpLayer.(*layers.UDP)
+			fmt.Printf("UDP: %d -> %d\n", udp.SrcPort, udp.DstPort)
+			layersutil.PrintPayload(packet)
+		})
 		return true
 	}
 	return false
 }
 
-func PrintICMPLayerData(icmpLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
+func PrintICMPLayerData(packet gopacket.Packet, icmpLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
 	if filterLayer != nil && *filterLayer.Layer == icmpLayer.LayerType() {
-		fmt.Println("====== New Packet ======")
-		icmp, _ := icmpLayer.(*layers.ICMPv4)
-		fmt.Printf("ICMPv4: TypeCode=%d Code=%d ID=%d Seq=%d \n",
-			icmp.TypeCode.Type(), icmp.TypeCode.Code(), icmp.Id, icmp.Seq)
+		layersutil.WrapPacketOutput(func() {
+			icmp, _ := icmpLayer.(*layers.ICMPv4)
+			fmt.Printf("ICMPv4: TypeCode=%d Code=%d ID=%d Seq=%d \n",
+				icmp.TypeCode.Type(), icmp.TypeCode.Code(), icmp.Id, icmp.Seq)
+			layersutil.PrintPayload(packet)
+		})
 		return true
 	}
 	return false
