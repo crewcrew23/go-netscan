@@ -44,8 +44,8 @@ func PrintTCPLayerData(packet gopacket.Packet, tcpLayer gopacket.Layer, filterLa
 					payload := appLayer.Payload()
 					if layersutil.IsHttpPayload(payload) {
 						layersutil.WrapPacketOutput(func() {
-							fmt.Printf("TCP: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
-							fmt.Println(string(payload)) //TODO: http paylaod
+							fmt.Printf("HTTP or HTTPS: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
+							layersutil.PrintHttpPayload(payload)
 						})
 						return true
 					}
@@ -53,7 +53,7 @@ func PrintTCPLayerData(packet gopacket.Packet, tcpLayer gopacket.Layer, filterLa
 			}
 		} else {
 			layersutil.WrapPacketOutput(func() {
-				fmt.Printf("TCP: %d -> %d | Flags: %s\n", tcp.SrcPort, tcp.DstPort, layersutil.PirntTCPFlags(packet))
+				fmt.Printf("TCP: %d -> %d | Flags: %s\n", tcp.SrcPort, tcp.DstPort, layersutil.PrintTCPFlags(packet))
 				layersutil.PrintPayload(packet)
 			})
 			return true
