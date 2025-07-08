@@ -38,7 +38,7 @@ func PrintTCPLayerData(packet gopacket.Packet, tcpLayer gopacket.Layer, filterLa
 		tcp, _ := tcpLayer.(*layers.TCP)
 
 		if filterLayer.Type == "http" {
-			if tcp.SrcPort == 80 || tcp.DstPort == 80 || tcp.SrcPort == 443 || tcp.DstPort == 443 {
+			if tcp.SrcPort == 80 || tcp.DstPort == 80 || tcp.SrcPort == 443 || tcp.DstPort == 443 || tcp.SrcPort == 8080 || tcp.DstPort == 8080 {
 				appLayer := packet.ApplicationLayer()
 				if appLayer != nil {
 					payload := appLayer.Payload()
