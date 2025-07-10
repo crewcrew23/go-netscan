@@ -44,10 +44,20 @@ apk add libpcap-dev
 ```bash
 git clone https://github.com/crewcrew23/go-netscan
 cd go-netscan
-go build -o ./bin/netscaner.exe .\cmd\main.go  #for linux -o ./bin/netscaner
+go build -o ./bin/netscaner .\cmd\main.go  #for windows -o ./bin/netscaner.exe
 ```
+
 
 ## ▶️ Usage
 ```bash
-sudo ./netsniff
+sudo ./go-netscan -i <network interface> -f <protocol: optional>
 ```
+
+## ⚙️ Command line options
+
+| Флаг         | Аргумент       | Описание                                                                 |
+|--------------|----------------|--------------------------------------------------------------------------|
+| `-i`         | `<network interface>`  | Specifies the network interface to capture traffic on (e.g. `eth0`).     |
+| `find-interfaces` |              | Lists available network interfaces. Used without `-i`.   |
+| `-f`         | `<filter>`     | Filter by protocol: `tcp`, `udp`, `http`, `icmp`, `ip`, `ethernet`.You can specify several, separated by commas. |
+
