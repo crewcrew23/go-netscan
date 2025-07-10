@@ -3,6 +3,7 @@ package layersutil
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
@@ -26,6 +27,27 @@ func PrintPayload(packet gopacket.Packet) {
 	if errLayer := packet.ErrorLayer(); errLayer != nil {
 		fmt.Printf("Decoding error: %v\n", errLayer.Error())
 	}
+}
+
+func PrintHttpPayload(payload []byte) {
+	if utf8.Valid(payload) {
+		fmt.Println(string(payload))
+		return
+	}
+
+	var sb strings.Builder
+	for len(payload) > 0 {
+		r, size := utf8.DecodeRune(payload)
+		if r == utf8.RuneError && size == 1 {
+			sb.WriteString(fmt.Sprintf("\\x%02X", payload[0]))
+			payload = payload[1:]
+		} else {
+			sb.WriteRune(r)
+			payload = payload[size:]
+		}
+	}
+
+	fmt.Println(sb.String())
 }
 
 func PrettyPrintPayload(payload []byte) {
@@ -70,7 +92,7 @@ func IsHttpPayload(payload []byte) bool {
 	return false
 }
 
-func PirntTCPFlags(packet gopacket.Packet) string {
+func PrintTCPFlags(packet gopacket.Packet) string {
 	flags := ""
 	if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
 		tcp, _ := tcpLayer.(*layers.TCP)
