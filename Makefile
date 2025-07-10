@@ -1,6 +1,6 @@
 .PHONY: build run clear
 
-EXE=./bin/netscaner.exe
+EXE=./bin/go-netscaner.exe
 
 build:
 	go build -o $(EXE) .\cmd\main.go
