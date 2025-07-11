@@ -58,7 +58,7 @@ sudo ./netscan -i <network interface> -f <protocol: optional>
 
 ## ⚙️ Command line options
 
-| Флаг         | Аргумент       | Описание                                                                 |
+| Flag         | Args       | Desc                                                                 |
 |--------------|----------------|--------------------------------------------------------------------------|
 | `-i`         | `<network interface>`  | Specifies the network interface to capture traffic on (e.g. `eth0`).     |
 | `find-interfaces` |              | Lists available network interfaces. Used without `-i`.   |
