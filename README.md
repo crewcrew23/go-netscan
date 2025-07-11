@@ -4,10 +4,10 @@
 
 ## 🚀 Features
 - Real-time packet capture from a network interface
-- Protocol parsing: TCP, UDP, ICMP
+- Protocol parsing: TCP, UDP, ICMP, HTTP, IP
 - Readable output: IP addresses, ports, TCP flags, protocols
 - Hex+ASCII payload dump (Wireshark-style)
-- BPF filter support (e.g. `tcp and port 80`)
+- filter by protocol support
 - Manual or automatic interface selection
 
 ## 📦 Dependencies
