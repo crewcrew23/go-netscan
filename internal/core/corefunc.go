@@ -37,30 +37,30 @@ func SelectInterface() string {
 	return devs[number].Name
 }
 
-func PrintPacketData(packet gopacket.Packet, filterLayer *types.LayerTypeWrapper) {
+func PrintPacketData(packet gopacket.Packet, filterLayer *types.LayerTypeWrapper, speed int32) {
 
 	// Ethernet Layer
 	if ethLayer := packet.Layer(layers.LayerTypeEthernet); ethLayer != nil {
-		layersdata.PrintEthernetLayerData(packet, ethLayer, filterLayer)
+		layersdata.PrintEthernetLayerData(packet, ethLayer, filterLayer, speed)
 	}
 
 	// IP Layer
 	if ipLayer := packet.Layer(layers.LayerTypeIPv4); ipLayer != nil {
-		layersdata.PrintIPLayerData(packet, ipLayer, filterLayer)
+		layersdata.PrintIPLayerData(packet, ipLayer, filterLayer, speed)
 	}
 
 	// TCP Layer
 	if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
-		layersdata.PrintTCPLayerData(packet, tcpLayer, filterLayer)
+		layersdata.PrintTCPLayerData(packet, tcpLayer, filterLayer, speed)
 	}
 
 	// UDP Layer
 	if udpLayer := packet.Layer(layers.LayerTypeUDP); udpLayer != nil {
-		layersdata.PrintUDPLayerData(packet, udpLayer, filterLayer)
+		layersdata.PrintUDPLayerData(packet, udpLayer, filterLayer, speed)
 	}
 
 	// ICMP Layer
 	if icmpLayer := packet.Layer(layers.LayerTypeICMPv4); icmpLayer != nil {
-		layersdata.PrintICMPLayerData(packet, icmpLayer, filterLayer)
+		layersdata.PrintICMPLayerData(packet, icmpLayer, filterLayer, speed)
 	}
 }

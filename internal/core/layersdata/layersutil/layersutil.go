@@ -30,24 +30,35 @@ func PrintPayload(packet gopacket.Packet) {
 }
 
 func PrintHttpPayload(payload []byte) {
+	if len(payload) == 0 {
+		return
+	}
+
+	s := string(payload)
+	lower := strings.ToLower(s)
+	textualTypes := []string{
+		"content-type: text",
+		"content-type: application/json",
+		"content-type: application/x-www-form-urlencoded",
+		"content-type: application/graphql",
+		"content-type: application/x-yaml",
+		"content-type: application/xml",
+		"content-type: text/xml",
+	}
+
+	for _, h := range textualTypes {
+		if strings.Contains(lower, h) {
+			fmt.Println(s)
+			return
+		}
+	}
+
 	if utf8.Valid(payload) {
 		fmt.Println(string(payload))
 		return
 	}
 
-	var sb strings.Builder
-	for len(payload) > 0 {
-		r, size := utf8.DecodeRune(payload)
-		if r == utf8.RuneError && size == 1 {
-			sb.WriteString(fmt.Sprintf("\\x%02X", payload[0]))
-			payload = payload[1:]
-		} else {
-			sb.WriteRune(r)
-			payload = payload[size:]
-		}
-	}
-
-	fmt.Println(sb.String())
+	PrettyPrintPayload(payload)
 }
 
 func PrettyPrintPayload(payload []byte) {
@@ -59,19 +70,19 @@ func PrettyPrintPayload(payload []byte) {
 		}
 		line := payload[i:end]
 
-		//HEX
+		// HEX
 		for _, b := range line {
-			fmt.Printf("%02X", b)
+			fmt.Printf("%02X ", b)
 		}
-
+		// padding
 		for j := len(line); j < bytesPerLine; j++ {
-			fmt.Print(" ")
+			fmt.Print("   ")
 		}
-		fmt.Print(" | ")
+		fmt.Print("| ")
 
-		//ASCII
+		// ASCII
 		for _, b := range line {
-			if b > 32 && b < 126 {
+			if b >= 32 && b < 127 {
 				fmt.Printf("%c", b)
 			} else {
 				fmt.Print(".")
@@ -82,6 +93,9 @@ func PrettyPrintPayload(payload []byte) {
 }
 
 func IsHttpPayload(payload []byte) bool {
+	if payload == nil {
+		return false
+	}
 	s := strings.ToUpper(string(payload))
 	httpMethods := []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "HTTP/"}
 	for _, method := range httpMethods {
