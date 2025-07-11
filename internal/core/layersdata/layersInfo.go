@@ -35,21 +35,27 @@ func PrintIPLayerData(packet gopacket.Packet, ipLayer gopacket.Layer, filterLaye
 
 func PrintTCPLayerData(packet gopacket.Packet, tcpLayer gopacket.Layer, filterLayer *types.LayerTypeWrapper) bool {
 	if filterLayer != nil && *filterLayer.Layer == tcpLayer.LayerType() {
+		var payload []byte
 		tcp, _ := tcpLayer.(*layers.TCP)
+		appLayer := packet.ApplicationLayer()
+		if appLayer != nil {
+			payload = appLayer.Payload()
+		}
 
 		if filterLayer.Type == "http" {
-			if tcp.SrcPort == 80 || tcp.DstPort == 80 || tcp.SrcPort == 443 || tcp.DstPort == 443 || tcp.SrcPort == 8080 || tcp.DstPort == 8080 {
-				appLayer := packet.ApplicationLayer()
-				if appLayer != nil {
-					payload := appLayer.Payload()
-					if layersutil.IsHttpPayload(payload) {
-						layersutil.WrapPacketOutput(func() {
-							fmt.Printf("HTTP or HTTPS: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
-							layersutil.PrintHttpPayload(payload)
-						})
-						return true
-					}
-				}
+			if tcp.SrcPort == 80 ||
+				tcp.DstPort == 80 ||
+				tcp.SrcPort == 443 ||
+				tcp.DstPort == 443 ||
+				tcp.SrcPort == 8080 ||
+				tcp.DstPort == 8080 ||
+				layersutil.IsHttpPayload(payload) {
+
+				layersutil.WrapPacketOutput(func() {
+					fmt.Printf("HTTP or HTTPS: %s:%d -> %s:%d\n", packet.NetworkLayer().NetworkFlow().Src().String(), tcp.SrcPort, packet.NetworkLayer().NetworkFlow().Dst().String(), tcp.DstPort)
+					layersutil.PrintHttpPayload(payload)
+				})
+				return true
 			}
 		} else {
 			layersutil.WrapPacketOutput(func() {
