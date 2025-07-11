@@ -1,12 +1,25 @@
-.PHONY: build run clear
+.PHONY: build
 
-EXE=./bin/go-netscaner.exe
+ifeq ($(OS),Windows_NT)
+    RM = del /Q
+    RMDIR = rmdir /Q /S
+    MKDIR = mkdir
+    ECHO = echo
+    SLASH = \\
+    EXE_EXT = .exe
+else
+    RM = rm -f
+    RMDIR = rm -rf
+    MKDIR = mkdir -p
+    ECHO = echo
+    SLASH = /
+    EXE_EXT =
+endif
+
+BIN_DIR = bin
+TARGET = $(BIN_DIR)$(SLASH)netscaner$(EXE_EXT)
 
 build:
-	go build -o $(EXE) .\cmd\main.go
+	go build -o $(TARGET) ./cmd/main.go
 
-run: 
-	$(EXE) --find-interfaces
-
-clear:
-	rm -f $(EXE)
+DEFAULT_GOAL := build

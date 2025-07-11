@@ -59,11 +59,24 @@ func main() {
 				Usage:    "show filtred trafic",
 				Required: false,
 			},
+
+			&cli.Int32Flag{
+				Name: "s",
+				Validator: func(i int32) error {
+					if i < 0 {
+						return errors.New("negative numbers are impossible")
+					}
+					return nil
+				},
+				Usage:    "time in milisecond | the package will be displayed at intervals at the specified time ",
+				Required: false,
+			},
 		},
 		Action: func(ctx context.Context, c *cli.Command) error {
 			netInterface := c.String("i")
 			findInterfaces := c.Bool("find-interfaces")
 			filter := c.String("f")
+			s := c.Int32("s")
 
 			if !findInterfaces && netInterface == "" {
 				return errors.New("at least 1 flag is required")
@@ -71,11 +84,11 @@ func main() {
 
 			if findInterfaces {
 				device := core.SelectInterface()
-				start(device, makeLayerType(filter))
+				start(device, makeLayerType(filter), s)
 				return nil
 			}
 
-			start(netInterface, makeLayerType(filter))
+			start(netInterface, makeLayerType(filter), s)
 			return nil
 
 		},
@@ -116,7 +129,7 @@ func makeLayerType(filter string) *types.LayerTypeWrapper {
 	return filterLayer
 }
 
-func start(netInterface string, filterLayer *types.LayerTypeWrapper) {
+func start(netInterface string, filterLayer *types.LayerTypeWrapper, speed int32) {
 	conn, err := pcap.OpenLive(netInterface, 65535, true, pcap.BlockForever)
 	if err != nil {
 		log.Fatal(err)
@@ -125,6 +138,6 @@ func start(netInterface string, filterLayer *types.LayerTypeWrapper) {
 
 	packetSource := gopacket.NewPacketSource(conn, conn.LinkType())
 	for packet := range packetSource.Packets() {
-		core.PrintPacketData(packet, filterLayer)
+		core.PrintPacketData(packet, filterLayer, speed)
 	}
 }
