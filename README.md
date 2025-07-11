@@ -1,5 +1,6 @@
-# 🧵 go-netscan simple cli network scaner
-**go-netscaner** is a command-line utility for real-time packet capturing and analysis, written in Go using [gopacket](https://github.com/google/gopacket). It works with a selected network interface, supports basic protocol decoding (TCP, UDP, ICMP), and provides human-readable output, including hex+ASCII payload dumps similar to Wireshark.
+
+# 🧵 netscan simple cli network scaner
+**netscaner** is a command-line utility for real-time packet capturing and analysis, written in Go using [gopacket](https://github.com/google/gopacket). It works with a selected network interface, supports basic protocol decoding (TCP, UDP, ICMP, HTTP), and provides human-readable output, including hex+ASCII payload dumps similar to Wireshark.
 
 ## 🚀 Features
 - Real-time packet capture from a network interface
@@ -44,9 +45,9 @@ apk add libpcap-dev
 
 ## ⚙️ Build
 ```bash
-git clone https://github.com/crewcrew23/go-netscan
-cd go-netscan
-go build -o ./bin/netscaner .\cmd\main.go  #for windows -o ./bin/netscaner.exe
+git clone https://github.com/crewcrew23/netscan
+cd netscan
+make
 ```
 
 
